@@ -13,17 +13,20 @@ def shield(target: str, power: int) -> str:
     return f"Shield protects {target} with {power} points"
 
 
-def spell_combiner(spell1: Callable, spell2: Callable) -> Callable:
+def spell_combiner(spell1: Callable[[str, int], str],
+                   spell2: Callable[[str, int], str]
+                   ) -> Callable[[str, int], tuple[str, str]]:
     if not callable(spell1) or not callable(spell2):
         raise TypeError("spell_combiner needs two spells")
 
-    def combined(target: str, power: int) -> tuple:
+    def combined(target: str, power: int) -> tuple[str, str]:
         return spell1(target, power), spell2(target, power)
 
     return combined
 
 
-def power_amplifier(base_spell: Callable, multiplier: int) -> Callable:
+def power_amplifier(base_spell: Callable[[str, int], str],
+                    multiplier: int) -> Callable[[str, int], str]:
     if not callable(base_spell):
         raise TypeError("power_amplifier needs a spell")
 
@@ -33,7 +36,9 @@ def power_amplifier(base_spell: Callable, multiplier: int) -> Callable:
     return amplified
 
 
-def conditional_caster(condition: Callable, spell: Callable) -> Callable:
+def conditional_caster(condition: Callable[[str, int], bool],
+                       spell: Callable[[str, int], str]
+                       ) -> Callable[[str, int], str]:
     if not callable(condition) or not callable(spell):
         raise TypeError("conditional_caster needs a condition and a spell")
 
@@ -45,11 +50,12 @@ def conditional_caster(condition: Callable, spell: Callable) -> Callable:
     return guarded
 
 
-def spell_sequence(spells: list[Callable]) -> Callable:
+def spell_sequence(spells: list[Callable[[str, int], str]]
+                   ) -> Callable[[str, int], list[str]]:
     if not all(callable(spell) for spell in spells):
         raise TypeError("spell_sequence needs a list of spells")
 
-    def cast_all(target: str, power: int) -> list:
+    def cast_all(target: str, power: int) -> list[str]:
         return [spell(target, power) for spell in spells]
 
     return cast_all

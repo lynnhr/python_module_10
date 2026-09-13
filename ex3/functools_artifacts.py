@@ -3,7 +3,7 @@ from collections.abc import Callable
 from functools import lru_cache, partial, reduce, singledispatch
 from typing import Any
 
-OPERATIONS = {
+OPERATIONS: dict[str, Callable[[int, int], int]] = {
     "add": operator.add,
     "multiply": operator.mul,
     "max": max,
@@ -23,7 +23,8 @@ def base_enchantment(power: int, element: str, target: str) -> str:
     return f"{element.title()} {target} ({power} power)"
 
 
-def partial_enchanter(base_enchantment: Callable) -> dict[str, Callable]:
+def partial_enchanter(base_enchantment: Callable[[int, str, str], str]
+                      ) -> dict[str, Callable[[str], str]]:
     if not callable(base_enchantment):
         raise TypeError("partial_enchanter needs an enchantment function")
     return {
@@ -56,7 +57,7 @@ def spell_dispatcher() -> Callable[[Any], str]:
         return spell
 
     @cast.register
-    def cast_multi(spell: list) -> str:
+    def cast_multi(spell: list[Any]) -> str:
         return f"{len(spell)} spells"
 
     return cast

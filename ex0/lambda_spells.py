@@ -1,8 +1,12 @@
-def artifact_sorter(artifacts: list[dict]) -> list[dict]:
+from typing import Any
+
+
+def artifact_sorter(artifacts: list[dict[str, Any]]) -> list[dict[str, Any]]:
     return sorted(artifacts, key=lambda a: a["power"], reverse=True)
 
 
-def power_filter(mages: list[dict], min_power: int) -> list[dict]:
+def power_filter(mages: list[dict[str, Any]],
+                 min_power: int) -> list[dict[str, Any]]:
     return list(filter(lambda m: m["power"] >= min_power, mages))
 
 
@@ -10,7 +14,7 @@ def spell_transformer(spells: list[str]) -> list[str]:
     return list(map(lambda s: f"* {s} *", spells))
 
 
-def mage_stats(mages: list[dict]) -> dict:
+def mage_stats(mages: list[dict[str, Any]]) -> dict[str, Any]:
     if not mages:
         return {"max_power": 0, "min_power": 0, "avg_power": 0.0}
     powers = list(map(lambda m: m["power"], mages))

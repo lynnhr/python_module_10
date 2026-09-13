@@ -27,9 +27,9 @@ def partial_enchanter(base_enchantment: Callable) -> dict[str, Callable]:
     if not callable(base_enchantment):
         raise TypeError("partial_enchanter needs an enchantment function")
     return {
-        "fire": partial(base_enchantment, 50, "flaming"),
-        "ice": partial(base_enchantment, 50, "frozen"),
-        "lightning": partial(base_enchantment, 50, "shocking"),
+        "fire_enchant": partial(base_enchantment, 50, "flaming"),
+        "ice_enchant": partial(base_enchantment, 50, "frozen"),
+        "lightning_enchant": partial(base_enchantment, 50, "shocking"),
     }
 
 
@@ -74,8 +74,8 @@ def main() -> None:
         print()
         print("Testing partial enchanter...")
         enchanters = partial_enchanter(base_enchantment)
-        print(enchanters["fire"]("Sword"))
-        print(enchanters["ice"]("Shield"))
+        print(enchanters["fire_enchant"]("Sword"))
+        print(enchanters["ice_enchant"]("Shield"))
 
         print()
         print("Testing memoized fibonacci...")

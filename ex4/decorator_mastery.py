@@ -1,11 +1,12 @@
 import time
 from collections.abc import Callable
 from functools import wraps
+from typing import Any
 
 
 def spell_timer(func: Callable) -> Callable:
     @wraps(func)
-    def wrapper(*args, **kwargs):
+    def wrapper(*args, **kwargs) -> Any:
         print(f"Casting {func.__name__}...")
         start = time.time()
         result = func(*args, **kwargs)
@@ -18,7 +19,7 @@ def spell_timer(func: Callable) -> Callable:
 def power_validator(min_power: int) -> Callable:
     def decorator(func: Callable) -> Callable:
         @wraps(func)
-        def wrapper(*args, **kwargs):
+        def wrapper(*args, **kwargs) -> Any:
             power = kwargs["power"] if "power" in kwargs else args[-1]
             if power < min_power:
                 return "Insufficient power for this spell"
@@ -32,7 +33,7 @@ def power_validator(min_power: int) -> Callable:
 def retry_spell(max_attempts: int) -> Callable:
     def decorator(func: Callable) -> Callable:
         @wraps(func)
-        def wrapper(*args, **kwargs):
+        def wrapper(*args, **kwargs) -> Any:
             for attempt in range(1, max_attempts + 1):
                 try:
                     return func(*args, **kwargs)
@@ -74,6 +75,20 @@ def waaagh_spell() -> str:
     return "Waaaaaaagh spelled !"
 
 
+def make_flaky_spell() -> Callable:
+    attempts = 0
+
+    @retry_spell(3)
+    def flaky_spell() -> str:
+        nonlocal attempts
+        attempts += 1
+        if attempts < 3:
+            raise ValueError("the magic is unstable")
+        return "Flaky spell worked on attempt 3!"
+
+    return flaky_spell
+
+
 def main() -> None:
     print("Testing spell timer...")
     print("Result:", fireball())
@@ -82,6 +97,11 @@ def main() -> None:
     print("Testing retrying spell...")
     print(cursed_spell())
     print(waaagh_spell())
+    print(make_flaky_spell()())
+
+    print()
+    print("Testing functools.wraps...")
+    print("Name kept:", fireball.__name__)
 
     print()
     print("Testing MageGuild...")
